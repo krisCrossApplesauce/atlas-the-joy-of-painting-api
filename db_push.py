@@ -10,53 +10,64 @@ conn = psycopg2.connect(dbname="the_joy_of_coding",
 cur = conn.cursor()
 
 
-colors_df = pd.read_csv('colors.csv')
-episode_colors_df = pd.read_csv('episode_colors.csv')
-episode_dates_df = pd.read_csv('episode_dates.csv')
-episode_subjects_df = pd.read_csv('episode_subjects.csv')
-subjects_df = pd.read_csv('subjects.csv')
+colors_df = pd.read_csv('clean_data/colors.csv')
+episode_colors_df = pd.read_csv('clean_data/episode_colors.csv')
+episode_dates_df = pd.read_csv('clean_data/episode_dates.csv')
+episode_subjects_df = pd.read_csv('clean_data/episode_subjects.csv')
+months_df = pd.read_csv('clean_data/months.csv')
+subjects_df = pd.read_csv('clean_data/subjects.csv')
 
-# Insert data into the 'colors' table
-colors_table_insert = """
-    INSERT INTO colors (color_id, color_name)
-    VALUES (%i, %s)
-"""
-for row in colors_df.itertuples(index=False):
-    cur.execute(colors_table_insert, row)
 
-# Insert data into the 'subjects' table
-subjects_table_insert = """
-    INSERT INTO subjects (subject_id, subject_name)
-    VALUES (%i, %s)
-"""
-for row in subjects_df.itertuples(index=False):
-    cur.execute(subjects_table_insert, row)
-
-# Insert data into the 'episodes' table
+# Insert date/month data into the 'episodes' table
 episodes_table_insert = """
-    INSERT INTO episodes (episode_id, air_date, month_id)
-    VALUES (%i, %s, %s)
+    INSERT INTO episodes (episode_id, title, air_date, month_name)
+    VALUES (%s, %s, %s, %s);
 """
 for row in episode_dates_df.itertuples(index=False):
     cur.execute(episodes_table_insert, row)
 
-# Insert data into the 'episode_colors' table
+# Insert color data into the 'episode' table
 episode_colors_table_insert = """
-    INSERT INTO episodes (colors)
-    VALUES (%s)
+    UPDATE episodes
+    SET color_id = (%s)
+    WHERE episode_id = (%s);
 """
 for row in episode_colors_df.itertuples(index=False):
-    cur.execute(episode_colors_table_insert, row)
+    cur.execute(episode_colors_table_insert, [row[1], row[0]])
 
-# Insert data into the 'episode_subjects' table
+# Insert subject data into the 'subjects' table
 episode_subjects_table_insert = """
-    INSERT INTO episodes (subjects)
-    VALUES (%s)
+    UPDATE episodes
+    SET subject_id = (%s)
+    WHERE episode_id = (%s);
 """
 for row in episode_subjects_df.itertuples(index=False):
-    cur.execute(episode_subjects_table_insert, row)
+    cur.execute(episode_subjects_table_insert, [row[1], row[0]])
 
 
+# Insert color data into the 'colors' table
+colors_table_insert = """
+    INSERT INTO colors (color_id, color_name, episode_id)
+    VALUES (%s, %s, %s);
+"""
+for row in colors_df.itertuples(index=False):
+    cur.execute(colors_table_insert, row)
+
+# Insert subject data into the 'subjects' table
+subjects_table_insert = """
+    INSERT INTO subjects (subject_id, subject_name, episode_id)
+    VALUES (%s, %s, %s);
+"""
+for row in subjects_df.itertuples(index=False):
+    cur.execute(subjects_table_insert, row)
+
+# Insert month data into the 'months' table
+months_table_insert = """
+    INSERT INTO months (month_name, episode_id)
+    VALUES (%s, %s);
+"""
+for row in months_df.itertuples(index=False):
+    cur.execute(months_table_insert, row)
 
 
 conn.commit()

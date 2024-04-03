@@ -25,3 +25,12 @@ CREATE TABLE IF NOT EXISTS "subjects" (
   "subject_name" varchar,
   "episode_id" int[]
 );
+
+ALTER TABLE "months" ADD FOREIGN KEY ("episode_id") REFERENCES "episodes" ("episode_id");
+ALTER TABLE "episodes" ADD FOREIGN KEY ("month_name") REFERENCES "months" ("month_name");
+
+ALTER TABLE "colors" ADD FOREIGN KEY ("episode_id") REFERENCES "episodes" ("episode_id");
+ALTER TABLE "episodes" ADD FOREIGN KEY ("color_id") REFERENCES "colors" ("color_id");
+
+ALTER TABLE "subjects" ADD FOREIGN KEY ("episode_id") REFERENCES "episodes" ("episode_id");
+ALTER TABLE "episodes" ADD FOREIGN KEY ("subject_id") REFERENCES "subjects" ("subject_id");
