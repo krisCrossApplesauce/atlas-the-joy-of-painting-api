@@ -1,5 +1,5 @@
-CREATE TABLE "episodes" (
-  "id" integer PRIMARY KEY,
+CREATE TABLE IF NOT EXISTS "episodes" (
+  "episode_id" integer PRIMARY KEY,
   "title" varchar,
   "air_date" varchar,
   "month" varchar,
@@ -7,23 +7,23 @@ CREATE TABLE "episodes" (
   "subjects" varchar
 );
 
-CREATE TABLE "months" (
-  "id" integer PRIMARY KEY,
-  "name" varchar,
+CREATE TABLE IF NOT EXISTS "months" (
+  "month_name" varchar PRIMARY KEY,
   "episodes" varchar
 );
 
-CREATE TABLE "colors" (
-  "id" integer PRIMARY KEY,
-  "name" varchar,
+CREATE TABLE IF NOT EXISTS "colors" (
+  "color_id" integer PRIMARY KEY,
+  "color_name" varchar,
   "episodes" varchar
 );
 
-CREATE TABLE "subjects" (
-  "id" integer PRIMARY KEY,
-  "name" varchar,
+CREATE TABLE IF NOT EXISTS "subjects" (
+  "subject_id" integer PRIMARY KEY,
+  "subject_name" varchar,
   "episodes" varchar
 );
+
 
 ALTER TABLE "months" ADD FOREIGN KEY ("episodes") REFERENCES "episodes" ("month");
 
@@ -47,4 +47,3 @@ CREATE TABLE "episodes_subjects" (
 ALTER TABLE "episodes_subjects" ADD FOREIGN KEY ("episodes_subjects") REFERENCES "episodes" ("subjects");
 
 ALTER TABLE "episodes_subjects" ADD FOREIGN KEY ("subjects_episodes") REFERENCES "subjects" ("episodes");
-
